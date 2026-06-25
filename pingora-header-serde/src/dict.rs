@@ -21,8 +21,6 @@ use zstd::dict;
 ///
 /// The output will be the trained dictionary
 pub fn train<P: AsRef<std::path::Path>>(dir_path: P) -> Result<Vec<u8>, Error> {
-    // TODO: check f is file, it can be dir
-
     if dir_path.as_ref().is_file() {
         return Err(Error::new(
             ErrorKind::InvalidInput,
