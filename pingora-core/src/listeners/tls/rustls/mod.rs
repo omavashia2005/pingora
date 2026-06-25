@@ -46,8 +46,7 @@ impl TlsSettings {
     /// _NOTE_ This function will panic if there is an error in loading
     /// certificate files or constructing the builder
     ///
-    /// Todo: Return a result instead of panicking XD
-    pub fn build(self) -> Acceptor {
+    pub fn build(self) -> Result<Acceptor> {
         // rustls 0.23+ requires an explicit CryptoProvider.
         pingora_rustls::install_default_crypto_provider();
 
@@ -77,10 +76,10 @@ impl TlsSettings {
             config.alpn_protocols = alpn_protocols;
         }
 
-        Acceptor {
+        Ok(Acceptor {
             acceptor: RusTlsAcceptor::from(Arc::new(config)),
             callbacks: None,
-        }
+        })
     }
 
     /// Enable HTTP/2 support for this endpoint, which is default off.

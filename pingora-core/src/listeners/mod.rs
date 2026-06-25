@@ -190,7 +190,7 @@ impl TransportStackBuilder {
 
         Ok(TransportStack {
             l4,
-            tls: self.tls.take().map(|tls| Arc::new(tls.build())),
+            tls: self.tls.take().map(|tls| Arc::new(tls.build().unwrap())),
             l4_buffer: self.l4_buffer,
             pre_tls_callback: self.pre_tls_callback.clone(),
         })
