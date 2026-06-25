@@ -188,7 +188,7 @@ impl TransportStackBuilder {
         #[cfg(windows)]
         let l4 = builder.listen().await?;
 
-        let tls_val = match self.tls.take(){
+        let tls_val = match self.tls.take() {
             Some(tls) => Some(Arc::new(tls.build()?)),
             None => None,
         };

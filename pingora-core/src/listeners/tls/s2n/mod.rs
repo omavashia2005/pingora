@@ -94,11 +94,9 @@ impl TlsSettings {
             security_policy: Some(policy.clone()),
         };
 
-        Ok(
-            Acceptor {
-                acceptor: TlsAcceptor::new(connection_builder),
-            }
-        )
+        Ok(Acceptor {
+            acceptor: TlsAcceptor::new(connection_builder),
+        })
     }
 
     /// Enable HTTP/2 support for this endpoint, which is default off.
