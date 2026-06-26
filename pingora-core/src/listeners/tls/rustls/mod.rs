@@ -52,10 +52,13 @@ impl TlsSettings {
 
         let Ok(Some((certs, key))) = load_certs_and_key_files(&self.cert_path, &self.key_path)
         else {
-            panic!(
-                "Failed to load provided certificates \"{}\" or key \"{}\".",
-                self.cert_path, self.key_path
-            )
+            return Error::e_explain(
+                ErrorType::InternalError,
+                format!(
+                    "Failed to load provided certificates \"{}\" or key \"{}\".",
+                    self.cert_path, self.key_path,
+                ),
+            );
         };
 
         let builder =
