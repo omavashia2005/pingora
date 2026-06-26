@@ -15,7 +15,7 @@
 use std::sync::Arc;
 
 use log::debug;
-use pingora_error::Result;
+use pingora_error::{Error, OrErr, Result};
 use pingora_s2n::{
     load_certs_and_key_files, ClientAuthType, Config, IgnoreVerifyHostnameCallback, S2NPolicy,
     TlsAcceptor, DEFAULT_TLS13,
@@ -82,9 +82,9 @@ impl TlsSettings {
         }
 
         if !self.verify_client_hostname {
-            builder
-                .set_verify_host_callback(IgnoreVerifyHostnameCallback::new())
-                .unwrap();
+            if let Err(_) = builder.set_verify_host_callback(IgnoreVerifyHostnameCallback::new()) {
+                return Err(ErrorType::InternalError, "Failed to verify client hostname");
+            };
         }
 
         let config = builder.build().unwrap();
