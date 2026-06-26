@@ -18,7 +18,7 @@ use crate::listeners::TlsAcceptCallbacks;
 use crate::protocols::tls::{server::handshake, server::handshake_with_callback, TlsStream};
 use log::debug;
 use pingora_error::ErrorType::InternalError;
-use pingora_error::{Error, OrErr, Result};
+use pingora_error::{Error, OrErr, Result, ErrorType, ErrorSource, RetryType, ImmutStr};
 use pingora_rustls::load_certs_and_key_files;
 use pingora_rustls::ClientCertVerifier;
 use pingora_rustls::ServerConfig;
@@ -52,13 +52,17 @@ impl TlsSettings {
 
         let Ok(Some((certs, key))) = load_certs_and_key_files(&self.cert_path, &self.key_path)
         else {
-            return Error::e_explain(
-                ErrorType::InternalError,
-                format!(
+            let error_message = format!(
                     "Failed to load provided certificates \"{}\" or key \"{}\".",
-                    self.cert_path, self.key_path,
-                ),
-            );
+                    self.cert_path, self.key_path);
+
+            return Err(Box::new(Error {
+                etype: ErrorType::InternalError,
+                esource: ErrorSource::Internal, 
+                retry: RetryType::Decided(false),       
+                cause: None,
+                context: Some(ImmutStr::Owned(error_message.into_boxed_str()))
+            }));
         };
 
         let builder =
